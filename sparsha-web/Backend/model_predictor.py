@@ -1,229 +1,248 @@
-"""
-ML Model Predictor for Skin Disease Detection
-Handles loading and prediction using the MobileNetV2 model
+"""PyTorch Model Predictor for Skin Disease Detection.
+
+Migrated from TensorFlow/Keras (.keras) to PyTorch (.pt).
+Loads the model file `sparsha_exp4_B4_epoch_19.pt` and exposes the same
+prediction interface so the rest of the backend doesn't need to change.
 """
 
-import os
-import numpy as np
-import tensorflow as tf
 from pathlib import Path
-from PIL import Image
 import io
-from typing import Dict, Optional, Tuple
+from typing import Dict, Optional
+import numpy as np
+from PIL import Image
+
+try:
+    import torch
+    from torch import nn
+    from torchvision import transforms
+    TORCH_AVAILABLE = True
+except Exception as e:  # pragma: no cover
+    print(f"⚠️ PyTorch import failed: {e}")
+    TORCH_AVAILABLE = False
 
 BASE_DIR = Path(__file__).resolve().parent
-MODEL_PATH = BASE_DIR / "mobilenet_dermnet_model_final.keras"
+MODEL_PATH = BASE_DIR / "sparsha_exp4_B4_epoch_19.pt"
 
-# Default class names (these should match your training data)
-# If the model was trained with different classes, update this list
+# Default class names (update if training used different labels)
 DEFAULT_CLASS_NAMES = [
-    "acne", "eczema", "psoriasis", "vitiligo", "melanoma", 
+    "acne", "eczema", "psoriasis", "vitiligo", "melanoma",
     "rosacea", "ringworm", "dermatitis", "seborrheic_dermatitis",
     "hives", "impetigo", "scabies", "shingles"
 ]
 
-IMG_SIZE = (128, 128)
+# Common input size for MobileNetV2 / most ImageNet backbones.
+# Adjust if your model expects a different resolution.
+IMG_SIZE = (224, 224)
 
 
 class ModelPredictor:
-    """Handles ML model loading and prediction"""
-    
+    """Handles PyTorch model loading and prediction."""
+
     def __init__(self):
-        self.model = None
+        self.model: Optional[torch.nn.Module] = None if TORCH_AVAILABLE else None
         self.class_names = DEFAULT_CLASS_NAMES
         self.is_loaded = False
+        self.framework = "pytorch" if TORCH_AVAILABLE else "none"
+        self.input_size = IMG_SIZE
+        self.num_classes = len(self.class_names)
+        self._transform = None
         self._load_model()
-    
+
+    def _build_transform(self):
+        if not TORCH_AVAILABLE:
+            return None
+        # Basic preprocessing: resize, center crop (optional), to tensor, normalize
+        # Using ImageNet normalization unless model was trained differently.
+        return transforms.Compose([
+            transforms.Resize(self.input_size),
+            transforms.ToTensor(),
+            transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                                 std=[0.229, 0.224, 0.225]),
+        ])
+
     def _load_model(self):
-        """Load the Keras model if available"""
+        if not TORCH_AVAILABLE:
+            print("⚠️ PyTorch not available. Using fallback prediction method.")
+            return
         try:
             if MODEL_PATH.exists():
-                print(f"🔄 Loading model from {MODEL_PATH}")
-                import traceback
+                print(f"🔄 Loading PyTorch model from {MODEL_PATH}")
+                self._transform = self._build_transform()
+                model = None
+                load_error = None
+
+                # Try TorchScript load first
                 try:
-                    self.model = tf.keras.models.load_model(str(MODEL_PATH))
-                    self.is_loaded = True
-                    
-                    # Get model output shape to determine number of classes
-                    output_shape = self.model.output_shape
-                    num_classes = output_shape[1] if len(output_shape) > 1 else output_shape[0]
-                    print(f"✅ Model loaded successfully")
-                    print(f"   Model input shape: {self.model.input_shape}")
-                    print(f"   Model output shape: {output_shape}")
-                    print(f"   Number of classes: {num_classes}")
-                    
-                    # Try to get class names from model if available
-                    # Check for class names in model configuration
-                    if hasattr(self.model, 'class_names'):
-                        self.class_names = self.model.class_names
-                        print(f"   Found class names in model: {len(self.class_names)} classes")
-                    elif hasattr(self.model, 'config') and 'class_names' in self.model.config:
-                        self.class_names = self.model.config['class_names']
-                        print(f"   Found class names in config: {len(self.class_names)} classes")
-                    else:
-                        # Adjust class names list to match model output
-                        if num_classes != len(self.class_names):
-                            print(f"⚠️ Warning: Model has {num_classes} classes but we have {len(self.class_names)} class names")
-                            print(f"   Using default class names. Predictions may not match correctly.")
-                            print(f"   Please update DEFAULT_CLASS_NAMES to match your training data.")
-                    
-                    # Test prediction with dummy data to verify model works
+                    model = torch.jit.load(str(MODEL_PATH), map_location="cpu")
+                    print("✅ Loaded TorchScript model")
+                except Exception as e_script:
+                    load_error = e_script
+                    print(f"⚠️ TorchScript load failed: {e_script}")
+                    # Try generic torch.load
                     try:
-                        dummy_input = np.zeros((1, IMG_SIZE[0], IMG_SIZE[1], 3), dtype=np.float32)
-                        test_pred = self.model.predict(dummy_input, verbose=0)
-                        print(f"✅ Model prediction test successful (output shape: {test_pred.shape})")
-                    except Exception as test_e:
-                        print(f"⚠️ Warning: Model loaded but prediction test failed: {test_e}")
-                        self.is_loaded = False
-                        
-                except Exception as load_e:
-                    print(f"❌ Error loading model: {load_e}")
-                    print(f"   Traceback:")
-                    traceback.print_exc()
-                    self.is_loaded = False
+                        obj = torch.load(str(MODEL_PATH), map_location="cpu")
+                        if isinstance(obj, nn.Module):
+                            model = obj
+                            print("✅ Loaded PyTorch nn.Module from checkpoint")
+                        elif isinstance(obj, dict) and 'state_dict' in obj:
+                            # Need an architecture to load state_dict into; try MobileNetV2
+                            from torchvision.models import mobilenet_v2
+                            backbone = mobilenet_v2(weights=None)
+                            backbone.classifier[1] = nn.Linear(backbone.classifier[1].in_features, len(self.class_names))
+                            backbone.load_state_dict(obj['state_dict'], strict=False)
+                            model = backbone
+                            print("✅ Loaded state_dict into MobileNetV2 backbone (non-strict)")
+                        elif isinstance(obj, dict):
+                            # Raw state_dict maybe
+                            from torchvision.models import mobilenet_v2
+                            backbone = mobilenet_v2(weights=None)
+                            backbone.classifier[1] = nn.Linear(backbone.classifier[1].in_features, len(self.class_names))
+                            backbone.load_state_dict(obj, strict=False)
+                            model = backbone
+                            print("✅ Loaded raw state_dict into MobileNetV2 (non-strict)")
+                        else:
+                            raise ValueError("Unsupported .pt file format")
+                    except Exception as e_generic:
+                        load_error = e_generic
+                        print(f"❌ Generic torch.load failed: {e_generic}")
+
+                if model is None:
+                    print("❌ Could not load PyTorch model; falling back to hash-based predictions.")
+                    if load_error:
+                        print(f"   Last error: {load_error}")
+                    return
+
+                model.eval()
+                self.model = model
+
+                # Attempt to infer num_classes from final layer if possible
+                try:
+                    if hasattr(model, 'classifier'):
+                        # MobileNetV2 style
+                        last = list(model.classifier.children())[-1]
+                        if isinstance(last, nn.Linear):
+                            self.num_classes = last.out_features
+                    elif hasattr(model, 'fc') and isinstance(model.fc, nn.Linear):
+                        self.num_classes = model.fc.out_features
+                    # Adjust class_names length if mismatch
+                    if self.num_classes != len(self.class_names):
+                        print(f"⚠️ Class name count ({len(self.class_names)}) differs from model output ({self.num_classes}).")
+                        if self.num_classes > len(self.class_names):
+                            # Extend with placeholder names
+                            for i in range(len(self.class_names), self.num_classes):
+                                self.class_names.append(f"class_{i}")
+                        else:
+                            # Truncate
+                            self.class_names = self.class_names[:self.num_classes]
+                        print(f"   Adjusted class_names to length {len(self.class_names)}")
+                except Exception as e_inf:
+                    print(f"⚠️ Could not infer num_classes: {e_inf}")
+
+                # Dummy forward pass sanity check
+                try:
+                    dummy = torch.zeros((1, 3, self.input_size[0], self.input_size[1]))
+                    with torch.no_grad():
+                        out = self.model(dummy)
+                    if isinstance(out, (list, tuple)):
+                        out = out[0]
+                    out_shape = list(out.shape)
+                    print(f"✅ Model forward pass OK. Output shape: {out_shape}")
+                except Exception as e_fp:
+                    print(f"⚠️ Forward pass failed: {e_fp}")
+                    self.model = None
+                    return
+
+                self.is_loaded = True
+                print("✅ PyTorch model loaded and ready for predictions")
             else:
-                print(f"⚠️ Model file not found at {MODEL_PATH}")
-                print("   Using fallback prediction method")
-                self.is_loaded = False
+                print(f"⚠️ Model file not found at {MODEL_PATH}. Using fallback method.")
         except Exception as e:
-            print(f"⚠️ Error in _load_model: {e}")
+            print(f"❌ Unexpected error loading model: {e}")
             import traceback
             traceback.print_exc()
-            print("   Using fallback prediction method")
-            self.is_loaded = False
-    
-    def preprocess_image(self, image_bytes: bytes) -> np.ndarray:
-        """
-        Preprocess image for model prediction
-        
-        Args:
-            image_bytes: Raw image bytes
-            
-        Returns:
-            Preprocessed image array
-        """
+
+    def preprocess_image(self, image_bytes: bytes) -> Optional[torch.Tensor]:
+        if not TORCH_AVAILABLE:
+            return None
         try:
-            # Load image from bytes
             img = Image.open(io.BytesIO(image_bytes))
-            
-            # Convert to RGB if needed
             if img.mode != 'RGB':
                 img = img.convert('RGB')
-            
-            # Resize to model input size
-            img = img.resize(IMG_SIZE)
-            
-            # Convert to array and normalize
-            img_array = np.array(img, dtype=np.float32) / 255.0
-            
-            # Add batch dimension
-            img_array = np.expand_dims(img_array, axis=0)
-            
-            return img_array
+            if self._transform is None:
+                self._transform = self._build_transform()
+            tensor = self._transform(img)  # (3, H, W)
+            return tensor.unsqueeze(0)  # (1, 3, H, W)
         except Exception as e:
             raise ValueError(f"Error preprocessing image: {e}")
-    
+
     def predict(self, image_bytes: bytes) -> Dict:
-        """
-        Predict skin disease from image
-        
-        Args:
-            image_bytes: Raw image bytes
-            
-        Returns:
-            Dictionary with prediction results
-        """
-        if not self.is_loaded:
+        if not self.is_loaded or not TORCH_AVAILABLE or self.model is None:
             return self._fallback_predict(image_bytes)
-        
         try:
-            # Preprocess image
-            processed_img = self.preprocess_image(image_bytes)
-            
-            # Get prediction
-            predictions = self.model.predict(processed_img, verbose=0)
-            prediction_array = predictions[0]
-            
-            # Validate prediction (should sum to ~1.0 for softmax)
-            pred_sum = np.sum(prediction_array)
-            if abs(pred_sum - 1.0) > 0.1:
-                print(f"⚠️ Warning: Prediction sum is {pred_sum:.4f}, expected ~1.0")
-            
-            # Get top prediction
-            top_idx = np.argmax(prediction_array)
-            confidence = float(prediction_array[top_idx] * 100)
-            
-            # Get disease name
-            if top_idx < len(self.class_names):
-                disease = self.class_names[top_idx]
+            inp = self.preprocess_image(image_bytes)
+            if inp is None:
+                return self._fallback_predict(image_bytes)
+            with torch.no_grad():
+                out = self.model(inp)
+            if isinstance(out, (list, tuple)):
+                out = out[0]
+            if out.dim() == 2 and out.size(0) == 1:
+                logits = out[0].cpu().numpy()
             else:
-                disease = f"class_{top_idx}"
-                print(f"⚠️ Warning: Class index {top_idx} exceeds class names list length {len(self.class_names)}")
-            
-            # Get top 3 predictions
-            top_3_indices = np.argsort(prediction_array)[-3:][::-1]
-            top_3 = [
-                {
-                    "disease": self.class_names[i] if i < len(self.class_names) else f"class_{i}",
-                    "confidence": float(prediction_array[i] * 100)
-                }
-                for i in top_3_indices
+                logits = out.cpu().numpy().flatten()
+
+            # Softmax
+            exp_logits = np.exp(logits - np.max(logits))
+            probs = exp_logits / (exp_logits.sum() + 1e-8)
+
+            top_idx = int(np.argmax(probs))
+            confidence = float(probs[top_idx] * 100)
+            disease = self.class_names[top_idx] if top_idx < len(self.class_names) else f"class_{top_idx}"
+
+            # Top 3
+            top3_idx = np.argsort(probs)[-3:][::-1]
+            top3 = [
+                {"disease": self.class_names[i] if i < len(self.class_names) else f"class_{i}",
+                 "confidence": float(probs[i] * 100)}
+                for i in top3_idx
             ]
-            
-            print(f"✅ ML Model prediction: {disease} ({confidence:.2f}%)")
-            
+
+            print(f"✅ PyTorch model prediction: {disease} ({confidence:.2f}%)")
             return {
                 "success": True,
                 "disease": disease,
                 "confidence": round(confidence, 2),
-                "top_predictions": top_3,
-                "method": "ml_model"
+                "top_predictions": top3,
+                "method": "pytorch_model"
             }
-            
         except Exception as e:
-            print(f"❌ Error during prediction: {e}")
+            print(f"❌ Error during PyTorch prediction: {e}")
             import traceback
             traceback.print_exc()
-            # Fallback to hash-based prediction
             print("   Falling back to hash-based prediction")
             return self._fallback_predict(image_bytes)
-    
+
     def _fallback_predict(self, image_bytes: bytes) -> Dict:
-        """
-        Fallback prediction method when model is not available
-        Uses deterministic hash-based prediction
-        """
         import hashlib
-        
         hasher = hashlib.md5(image_bytes).hexdigest()
-        
-        # Use default class names for fallback
-        disease_keys = self.class_names[:3]  # Use first 3 as defaults
-        if not disease_keys:
-            disease_keys = ["eczema", "psoriasis", "acne"]
-        
+        disease_keys = self.class_names[:3] or ["eczema", "psoriasis", "acne"]
         idx = int(hasher, 16) % len(disease_keys)
         detected = disease_keys[idx]
-        
-        # Confidence derived from hash (70-99%)
         confidence = 70 + (int(hasher[:4], 16) % 30)
-        
         return {
             "success": True,
             "disease": detected,
             "confidence": confidence,
-            "top_predictions": [
-                {"disease": detected, "confidence": confidence}
-            ],
+            "top_predictions": [{"disease": detected, "confidence": confidence}],
             "method": "fallback"
         }
 
 
-# Global model predictor instance
-_predictor = None
+# Global singleton
+_predictor: Optional[ModelPredictor] = None
+
 
 def get_predictor() -> ModelPredictor:
-    """Get or create the global model predictor instance"""
     global _predictor
     if _predictor is None:
         _predictor = ModelPredictor()

@@ -31,16 +31,17 @@ def test_model():
     if not predictor.is_loaded:
         print("\n❌ Model is not loaded. Cannot test predictions.")
         print("   Please check:")
-        print("   - Model file exists at: mobilenet_dermnet_model_final.keras")
-        print("   - TensorFlow is installed")
-        print("   - Model file is not corrupted")
+        print("   - Model file exists at: sparsha_exp4_B4_epoch_19.pt")
+        print("   - PyTorch is installed (pip install torch torchvision)")
+        print("   - The .pt file is a valid TorchScript or nn.Module checkpoint")
         return False
     
     # Test with dummy image
     print("\n2. Testing prediction with dummy image...")
     try:
-        # Create a dummy RGB image
-        dummy_img = Image.new('RGB', (128, 128), color='red')
+        # Create a dummy RGB image (size roughly matching model's expected input)
+        size = getattr(predictor, 'input_size', (224, 224))
+        dummy_img = Image.new('RGB', size, color='red')
         img_bytes = io.BytesIO()
         dummy_img.save(img_bytes, format='JPEG')
         img_bytes = img_bytes.getvalue()

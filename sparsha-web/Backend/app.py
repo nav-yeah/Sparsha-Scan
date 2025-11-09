@@ -140,17 +140,10 @@ def health():
         "status": "ok",
         "model_loaded": predictor.is_loaded,
         "skin_helper_available": skin_helper is not None,
-        "model_path": str(predictor.__class__.__module__) if hasattr(predictor, '__class__') else "unknown"
+        "model_framework": getattr(predictor, "framework", "unknown"),
+        "num_classes": len(getattr(predictor, "class_names", []) or []),
+        "input_size": getattr(predictor, "input_size", None),
     }
-    
-    # Add more details if model is loaded
-    if predictor.is_loaded and predictor.model:
-        try:
-            health_info["model_input_shape"] = str(predictor.model.input_shape)
-            health_info["model_output_shape"] = str(predictor.model.output_shape)
-            health_info["num_classes"] = len(predictor.class_names)
-        except:
-            pass
     
     # Check if Google Places API is configured
     if skin_helper:
