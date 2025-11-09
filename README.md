@@ -1,5 +1,5 @@
 
-\## Setup
+## Setup
 
 1\. Clone repo
 
@@ -13,4 +13,5 @@
 5\. open another terminal, go to frontend, run `npm install`
 
 6\. then run `npm run dev`
+
 
