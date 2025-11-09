@@ -1,0 +1,32 @@
+{
+  "eczema": {
+    "severity": "Moderate",
+    "suggestions": [
+      "Apply moisturizer regularly",
+      "Avoid known irritants and fragrances",
+      "Use gentle cleansers and lukewarm water",
+      "Consider OTC hydrocortisone for flare-ups",
+      "See a dermatologist if symptoms worsen"
+    ]
+  },
+  "psoriasis": {
+    "severity": "Moderate",
+    "suggestions": [
+      "Topical corticosteroids as prescribed",
+      "Use emollients to reduce scaling",
+      "Avoid triggers like alcohol and smoking",
+      "Phototherapy for extensive disease",
+      "Consult dermatologist for systemic options"
+    ]
+  },
+  "acne": {
+    "severity": "Mild",
+    "suggestions": [
+      "Use non-comedogenic moisturizers",
+      "Topical benzoyl peroxide or retinoids",
+      "Avoid picking or squeezing lesions",
+      "Follow a gentle skin-care routine",
+      "See dermatologist if nodular or cystic"
+    ]
+  }
+}

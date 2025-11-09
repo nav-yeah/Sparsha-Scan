@@ -1,0 +1,29 @@
+[
+  {
+    "name": "Dr. Sarah Johnson",
+    "specialty": "Clinical Dermatology",
+    "rating": 4.9,
+    "reviews": 324,
+    "location": "Mumbai, Maharashtra",
+    "availability": "Available Today",
+    "teleconsult": true
+  },
+  {
+    "name": "Dr. Rajesh Kumar",
+    "specialty": "Pediatric Dermatology",
+    "rating": 4.8,
+    "reviews": 256,
+    "location": "Bangalore, Karnataka",
+    "availability": "Next Available: Tomorrow",
+    "teleconsult": true
+  },
+  {
+    "name": "Dr. Priya Sharma",
+    "specialty": "Cosmetic Dermatology",
+    "rating": 4.9,
+    "reviews": 412,
+    "location": "Delhi, NCR",
+    "availability": "Available This Week",
+    "teleconsult": false
+  }
+]

@@ -1,0 +1,7 @@
+# Note: TensorFlow requires Python 3.8-3.12
+# Python 3.13 and 3.14 are not supported
+# If you have Python 3.14, please install Python 3.11 or 3.12
+tensorflow>=2.13.0
+matplotlib>=3.7.0
+numpy>=1.24.0
+

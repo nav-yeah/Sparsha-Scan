@@ -1,0 +1,121 @@
+[
+  {
+    "id": "44addf2917c7431687ab6604234afe8e",
+    "image": "/api/uploads/303160562f834bab9c73363a52b2aaf5_0f77a96f.jpg",
+    "disease": "acne",
+    "confidence": 52.48,
+    "severity": "Mild",
+    "suggestions": [
+      "Use non-comedogenic moisturizers",
+      "Topical benzoyl peroxide or retinoids",
+      "Avoid picking or squeezing lesions",
+      "Follow a gentle skin-care routine",
+      "See dermatologist if nodular or cystic"
+    ],
+    "treatment_advice": {
+      "about": {
+        "description": "Acne is a common skin condition that occurs when hair follicles become clogged with oil and dead skin cells. This can lead to pimples, blackheads, whiteheads, and sometimes painful cysts.",
+        "commonality": "It is highly common, affecting people of all ages but particularly prevalent among teenagers and young adults."
+      },
+      "treatment_options": {
+        "over_the_counter": [
+          "Salicylic acid products",
+          "Benzoyl peroxide creams",
+          "Topical retinoids (e.g., adapalene)",
+          "Alpha hydroxy acids"
+        ],
+        "prescription": [
+          "Topical antibiotics",
+          "Oral antibiotics",
+          "Oral contraceptives (for women)",
+          "Isotretinoin"
+        ],
+        "home_care": [
+          "Wash skin gently twice daily",
+          "Use non-comedogenic (non-pore clogging) products",
+          "Moisturize regularly with oil-free lotions",
+          "Avoid picking or squeezing pimples"
+        ],
+        "lifestyle": [
+          "Manage stress levels",
+          "Maintain a balanced diet",
+          "Get adequate sleep",
+          "Shower after sweating or exercise"
+        ]
+      },
+      "when_to_see_doctor": {
+        "warning_signs": [
+          "Acne that doesn't improve with over-the-counter treatments",
+          "Deep, painful cysts or nodules",
+          "Acne causing scarring or dark spots",
+          "Significant emotional distress due to acne"
+        ],
+        "urgency": "Seek immediate care if you experience severe pain, fever, or spreading redness, which could indicate a serious infection."
+      },
+      "dos_and_donts": {
+        "dos": [
+          "Cleanse skin gently with a mild soap",
+          "Use oil-free and non-comedogenic makeup and skincare",
+          "Protect your skin from the sun",
+          "Follow your treatment plan consistently"
+        ],
+        "donts": [
+          "Pick, pop, or squeeze pimples",
+          "Over-wash or scrub your skin harshly",
+          "Use greasy or irritating skincare products",
+          "Ignore persistent or severe acne"
+        ]
+      }
+    },
+    "confidence_level": "LOW",
+    "recommend_urgent_care": true,
+    "has_ai_advice": true,
+    "timestamp": "2025-11-09T10:25:59.897161",
+    "method": "ml_model",
+    "top_predictions": [
+      {
+        "disease": "acne",
+        "confidence": 52.4803581237793
+      },
+      {
+        "disease": "class_22",
+        "confidence": 20.597585678100586
+      },
+      {
+        "disease": "class_20",
+        "confidence": 4.4735517501831055
+      }
+    ]
+  },
+  {
+    "id": "7c36e4c94fa0475ebf4c059b6f5c386c",
+    "image": "/api/uploads/f6514780cc3f4af8924e37b5628fab60_acbe7216.png",
+    "disease": "acne",
+    "confidence": 26.39,
+    "severity": "Mild",
+    "suggestions": [
+      "Use non-comedogenic moisturizers",
+      "Topical benzoyl peroxide or retinoids",
+      "Avoid picking or squeezing lesions",
+      "Follow a gentle skin-care routine",
+      "See dermatologist if nodular or cystic"
+    ],
+    "treatment_advice": "Based on the detection of acne with 26.39% confidence, it is recommended to consult with a dermatologist for proper diagnosis and treatment. The confidence level is low, so professional medical advice is essential.",
+    "timestamp": "2025-11-08T18:41:35.197799",
+    "method": "ml_model",
+    "top_predictions": [
+      {
+        "disease": "acne",
+        "confidence": 26.388336181640625
+      },
+      {
+        "disease": "class_18",
+        "confidence": 13.297375679016113
+      },
+      {
+        "disease": "class_22",
+        "confidence": 10.928030014038086
+      }
+    ]
+  }
+]
