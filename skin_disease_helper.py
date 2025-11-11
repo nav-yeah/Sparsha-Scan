@@ -12,16 +12,16 @@ class SkinDiseaseHelper:
     
     def __init__(self):
         # Gemini API for treatment advice
-        self.gemini_key = os.getenv("GOOGLE_API_KEY")
+        self.gemini_key = os.getenv("GOOGLE_PLACES_API_KEY")
         if not self.gemini_key:
-            raise ValueError("GOOGLE_API_KEY not found in .env file")
+            raise ValueError("GOOGLE_PLACES_API_KEY not found in .env file")
         
         genai.configure(api_key=self.gemini_key)
         self.model = genai.GenerativeModel('models/gemini-2.5-flash')
         
         # --- GEOAPIFY SETUP (REPLACES GOOGLE MAPS) ---
         # Loads key saved as GOOGLE_PLACES_API in .env file
-        self.places_key = os.getenv("GOOGLE_PLACES_API") 
+        self.places_key = os.getenv("GOOGLE_PLACES_API_KEY") 
         self.GEOAPIFY_PLACES_URL = "https://api.geoapify.com/v2/places"
         self.GEOAPIFY_GEOCODE_URL = "https://api.geoapify.com/v1/geocode/search"
         
