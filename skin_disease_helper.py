@@ -11,28 +11,31 @@ load_dotenv()
 class SkinDiseaseHelper:
     
     def __init__(self):
-        # Gemini API for treatment advice
-        self.gemini_key = os.getenv("GOOGLE_PLACES_API_KEY")
+        # 1. FIX: Load the correct key name for the Gemini API
+        self.gemini_key = os.getenv("GOOGLE_API_KEY")
         if not self.gemini_key:
-            raise ValueError("GOOGLE_PLACES_API_KEY not found in .env file")
+            # Change exception message to reflect the correct key name
+            raise ValueError("GOOGLE_API_KEY not found in .env file")
         
         genai.configure(api_key=self.gemini_key)
         self.model = genai.GenerativeModel('models/gemini-2.5-flash')
         
         # --- GEOAPIFY SETUP (REPLACES GOOGLE MAPS) ---
-        # Loads key saved as GOOGLE_PLACES_API in .env file
+        # 2. Key name is correct here: GOOGLE_PLACES_API_KEY
         self.places_key = os.getenv("GOOGLE_PLACES_API_KEY") 
         self.GEOAPIFY_PLACES_URL = "https://api.geoapify.com/v2/places"
         self.GEOAPIFY_GEOCODE_URL = "https://api.geoapify.com/v1/geocode/search"
         
         if not self.places_key:
-            print("⚠️ Warning: GOOGLE_PLACES_API not found. Doctor search disabled.")
+            # Change warning message to reflect the key being used
+            print("⚠️ Warning: GOOGLE_PLACES_API_KEY not found. Doctor search disabled.")
             
     def get_treatment_advice(
         self, 
         disease_name: str, 
         confidence_score: float
     ) -> Dict:
+        # ... (Gemini API logic remains correctly implemented) ...
         
         # Determine confidence level
         if confidence_score < 70:
@@ -110,7 +113,7 @@ Keep it 250-300 words, simple language."""
             data = response.json()
             
             if data and data.get('features'):
-                # Geoapify returns [lon, lat], we return {'lat', 'lon'}
+                # Geoapify returns [lon, lat], we store {'lat', 'lon'}
                 coords = data['features'][0]['geometry']['coordinates']
                 return {'lat': coords[1], 'lon': coords[0]}
             
@@ -130,7 +133,7 @@ Keep it 250-300 words, simple language."""
         if not self.places_key:
             return {
                 "success": False,
-                "error": "Doctor search not configured. Add GOOGLE_PLACES_API to .env file.",
+                "error": "Doctor search not configured. Add GOOGLE_PLACES_API_KEY to .env file.",
                 "doctors": []
             }
         
@@ -147,7 +150,8 @@ Keep it 250-300 words, simple language."""
             # 2. Use Geoapify Places API to search around the coordinates
             places_params = {
                 'categories': 'healthcare.doctor,healthcare.clinic', # Targeted search
-                'filter': f'circle:{coords["lon"]},{coords["lat"]},{int(radius_km * 1000)}',
+                # 3. FIX: Swapped coordinates to Lat, Lon to solve the 400 Bad Request error
+                'filter': f'circle:{coords["lat"]},{coords["lon"]},{int(radius_km * 1000)}',
                 'limit': max_results,
                 'apiKey': self.places_key
             }
