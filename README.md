@@ -95,8 +95,8 @@ models/
 Clone the repository:
 
 ```
-git clone https://github.com/yourusername/sparsha.git
-cd sparsha
+git clone https://github.com/yourusername/Sparsha-Scan.git
+cd Sparsha-Scan
 ```
 
 Install dependencies:
