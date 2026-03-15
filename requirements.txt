@@ -1,3 +1,30 @@
-google-generativeai>=0.3.0
-requests>=2.31.0
-python-dotenv>=1.0.0
+# ===== Core ML =====
+torch
+torchvision
+numpy
+pandas
+scikit-learn
+
+# ===== Image processing =====
+opencv-python
+Pillow
+matplotlib
+
+# ===== Backend API =====
+fastapi
+uvicorn[standard]
+python-multipart
+pydantic
+
+# ===== AI Agent / LLM =====
+google-generativeai
+requests
+
+# ===== AI Agent / LLM =====
+crewai
+langchain-openai
+python-dotenv
+
+# ===== External API / utils =====
+tqdm
+matplotlib
