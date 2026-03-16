@@ -69,23 +69,50 @@ You can test the complete pipeline including image upload, disease prediction, e
 - Integrated end-to-end pipeline from image upload to guidance generation  
 
 ---
-## System Architecture
-User Image Input
-        ↓
-Skin Disease Classification Model
-        ↓
-Confidence Evaluation
-        ↓
-Explainability (Grad-CAM Visualization)
-        ↓
-AI Guidance Generation
-        ↓
-Location-Aware Doctor Search
-        ↓
-Personalized Skincare Recommendation Engine
-        ↓
-Frontend Output Interface
 
+## System Architecture
+```text
+┌─────────────────────────────────┐
+│        User Image Input         │
+└────────────────┬────────────────┘
+                 │
+                 ▼
+┌─────────────────────────────────┐
+│  Skin Disease Classification    │
+│           Model (CNN)           │
+└────────────────┬────────────────┘
+                 │
+                 ▼
+┌─────────────────────────────────┐
+│      Confidence Evaluation      │
+└────────────────┬────────────────┘
+                 │
+                 ▼
+┌─────────────────────────────────┐
+│   Explainability (Grad-CAM)     │
+│        Visualization            │
+└────────────────┬────────────────┘
+                 │
+                 ▼
+┌─────────────────────────────────┐
+│    AI Guidance Generation       │
+└────────────────┬────────────────┘
+                 │
+                 ▼
+┌─────────────────────────────────┐
+│  Location-Aware Doctor Search   │
+└────────────────┬────────────────┘
+                 │
+                 ▼
+┌─────────────────────────────────┐
+│  Personalized Skincare          │
+│   Recommendation Engine         │
+└────────────────┬────────────────┘
+                 │
+                 ▼
+┌─────────────────────────────────┐
+│    Frontend Output Interface    │
+└─────────────────────────────────┘
 
 ---
 
@@ -121,6 +148,29 @@ Downloaded weights should be placed inside:
 ```
 models/
 ```
+
+---
+## Dataset
+
+This project uses the **DermNet Skin Disease Dataset** available on Kaggle.
+
+- **Source:** [DermNet Skin Disease Image Dataset – Kaggle](https://www.kaggle.com/datasets/shubhamgoel27/dermnet)
+- **Origin:** [DermNet NZ](https://dermnetnz.org/) — a trusted clinical dermatology resource
+- **Total Images:** ~19,500 images
+- **Classes:** 23 skin disease categories
+- **Split:** Pre-divided into `train/` and `test/` folders
+
+### Disease Categories Include:
+- Acne and Rosacea
+- Eczema
+- Psoriasis
+- Melanoma
+- Nail Fungus
+- Hair Loss / Alopecia
+- and 17 more...
+
+> **Note:** The dataset is for research and educational purposes only.  
+> Please refer to [Kaggle's dataset page](https://www.kaggle.com/datasets/shubhamgoel27/dermnet) for license details before commercial use.
 
 ---
 
