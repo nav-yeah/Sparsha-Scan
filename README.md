@@ -113,7 +113,7 @@ You can test the complete pipeline including image upload, disease prediction, e
 ┌─────────────────────────────────┐
 │    Frontend Output Interface    │
 └─────────────────────────────────┘
-
+```
 ---
 
 ## Model Training Overview  
