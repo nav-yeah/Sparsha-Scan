@@ -13,7 +13,7 @@ The Sparsha web application is deployed and accessible online.
 You can test the complete pipeline including image upload, disease prediction, explainability visualization, and personalized skincare guidance using the link below.
 
 🔗 **Open Application:**  
-[Launch Sparsha](YOUR_DEPLOYMENT_LINK)
+[Launch Sparsha](https://bandosmonkies.github.io/Skin-Disease-Detection/)
 
 > Note: The first prediction may take a few seconds due to model initialization on the server.
 ---
