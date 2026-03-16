@@ -43,28 +43,23 @@ You can test the complete pipeline including image upload, disease prediction, e
 - Integrated end-to-end pipeline from image upload to guidance generation  
 
 ---
+## System Architecture
+User Image Input
+        ↓
+Skin Disease Classification Model
+        ↓
+Confidence Evaluation
+        ↓
+Explainability (Grad-CAM Visualization)
+        ↓
+AI Guidance Generation
+        ↓
+Location-Aware Doctor Search
+        ↓
+Personalized Skincare Recommendation Engine
+        ↓
+Frontend Output Interface
 
-## System Architecture  
-
-<p align="center">
-
-User Image Input  
-↓  
-Skin Disease Classification Model  
-↓  
-Confidence Evaluation  
-↓  
-Explainability (Grad-CAM Visualization)  
-↓  
-AI Guidance Generation  
-↓  
-Location-Aware Doctor Search  
-↓  
-Personalized Skincare Recommendation Engine  
-↓  
-Frontend Output Interface  
-
-</p>
 
 ---
 
