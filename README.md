@@ -36,7 +36,7 @@ You can test the complete pipeline including image upload, disease prediction, e
 ### Personalized Treatment Plan
 ![Treatment Plan](images/img5_treatment.png)
 
-### Doctor Locator
+### Locate Specialists
 ![Doctor Locator](images/img6_doctorlocator.png)
 
 ### AI Dermatology Agent
