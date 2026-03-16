@@ -6,6 +6,17 @@ Sparsha is an end-to-end AI healthcare platform developed as part of the **PAML 
 The system combines computer vision, explainable AI, and agent-driven reasoning to improve accessibility to preliminary skin health guidance. It enables automated skin disease detection from images and generates confidence-aware treatment insights along with personalized skincare assistance.
 
 ---
+## Live Deployment  
+
+The Sparsha web application is deployed and accessible online.
+
+You can test the complete pipeline including image upload, disease prediction, explainability visualization, and personalized skincare guidance using the link below.
+
+🔗 **Open Application:**  
+[Launch Sparsha](YOUR_DEPLOYMENT_LINK)
+
+> Note: The first prediction may take a few seconds due to model initialization on the server.
+---
 
 ## Key Features  
 
@@ -35,23 +46,25 @@ The system combines computer vision, explainable AI, and agent-driven reasoning 
 
 ## System Architecture  
 
-```
-User Image Input
-        ↓
-Skin Disease Classification Model
-        ↓
-Confidence Evaluation
-        ↓
-Explainability (Grad-CAM Visualization)
-        ↓
-AI Guidance Generation
-        ↓
-Location-Aware Doctor Search
-        ↓
-Personalized Skincare Recommendation Engine
-        ↓
-Frontend Output Interface
-```
+<p align="center">
+
+User Image Input  
+↓  
+Skin Disease Classification Model  
+↓  
+Confidence Evaluation  
+↓  
+Explainability (Grad-CAM Visualization)  
+↓  
+AI Guidance Generation  
+↓  
+Location-Aware Doctor Search  
+↓  
+Personalized Skincare Recommendation Engine  
+↓  
+Frontend Output Interface  
+
+</p>
 
 ---
 
