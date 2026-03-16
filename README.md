@@ -16,7 +16,33 @@ You can test the complete pipeline including image upload, disease prediction, e
 [Launch Sparsha](https://bandosmonkies.github.io/Skin-Disease-Detection/)
 
 > Note: The first prediction may take a few seconds due to model initialization on the server.
+
 ---
+
+## Application Workflow
+
+### Dashboard Overview
+![Dashboard](images/img1.png)
+
+### Comprehensive Skin Health Menu
+![Menu](images/img2_menu.png)
+
+### Skin Disease Detection
+![Detection](images/img3_detection.png)
+
+### Treatment Recommendations
+![Treatment](images/img4_treatment.png)
+
+### Personalized Treatment Plan
+![Treatment Plan](images/img5_treatment.png)
+
+### Doctor Locator
+![Doctor Locator](images/img6_doctorlocator.png)
+
+### AI Dermatology Agent
+![Agent](images/img7_agent.png)
+
+----
 
 ## Key Features  
 
