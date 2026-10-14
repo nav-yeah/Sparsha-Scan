@@ -1,7 +1,7 @@
 # Sparsha  
 ### AI-Powered Skin Disease Detection and Personalized Skincare Assistant  
 
-Sparsha is an end-to-end AI healthcare platform developed as part of the **PAML Workshop hosted by the Center for Innovation and Entrepreneurship (CIE), PES University**, where the project was recognized as an **Honourable Team**.
+Sparsha is an end-to-end AI healthcare platform developed as part of the **PAML Workshop hosted by the Center for Innovation and Entrepreneurship (CIE), PES University**, where the project was awarded as an **Honourable Mention**.
 
 The system combines computer vision, explainable AI, and agent-driven reasoning to improve accessibility to preliminary skin health guidance. It enables automated skin disease detection from images and generates confidence-aware treatment insights along with personalized skincare assistance.
 
